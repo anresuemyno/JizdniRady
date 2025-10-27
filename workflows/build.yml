@@ -1,0 +1,29 @@
+name: Build Janudul JSON
+
+on:
+  schedule:
+    # POZOR: cron je v UTC. 02:12 UTC ~= 03:12/04:12 CET/CEST
+    - cron: "12 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build janudul.json
+        run: python build_janudul.py
+
+      # Publikace na GitHub Pages přes gh-pages větev (simple & osvědčené)
+      - name: Publish to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_branch: gh-pages
